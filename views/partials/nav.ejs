@@ -1,0 +1,68 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold text-light" href="/">📝 Blogify</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto">
+        <!-- Home -->
+        <li class="nav-item">
+         <a class="nav-link" href="/">Home</a>
+
+        </li>
+
+        <% if (locals.user) { %>
+          <!-- Add Blog -->
+          <li class="nav-item">
+            <a class="nav-link" href="/blog/add">Add Blog</a>
+          </li>
+
+          <!-- User Dropdown -->
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle text-info fw-semibold"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              👤 <%= user.email %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+              <li>
+                <a class="dropdown-item text-danger" href="/user/logout">🚪 Logout</a>
+              </li>
+            </ul>
+          </li>
+        <% } else { %>
+          <!-- Auth Links -->
+          <li class="nav-item">
+            <a class="nav-link" href="/user/signup">Create Account</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user/signin">Login</a>
+          </li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Error Alert -->
+<% if (locals.error) { %>
+<div class="container mt-3">
+  <div class="alert alert-danger shadow-sm" role="alert">
+    ⚠️ <%= locals.error %>
+  </div>
+</div>
+<% } %>

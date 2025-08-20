@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head') %>
+    <title>Sign Up</title>
+    <style>
+      body {
+        background: linear-gradient(135deg, #0d1b2a, #000000);
+        color: #f8f9fa;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
+      .page-container {
+        display: flex;
+        justify-content: center;
+        padding-top: 80px; /* space below navbar */
+      }
+      .auth-card {
+        background: #1b263b;
+        border: none;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+        width: 100%;
+        max-width: 450px;
+      }
+      .form-control {
+        background-color: #0d1b2a;
+        border: 1px solid #415a77;
+        color: #f8f9fa;
+      }
+      .form-control:focus {
+        border-color: #1e90ff;
+        box-shadow: 0 0 10px #1e90ff;
+      }
+      .btn-custom {
+        background: #1e90ff;
+        border: none;
+        border-radius: 10px;
+        width: 100%;
+        padding: 0.75rem;
+        font-weight: bold;
+        color: white;
+        transition: all 0.3s;
+      }
+      .btn-custom:hover {
+        background: #63b3ed;
+        box-shadow: 0 0 15px #1e90ff;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar always at top -->
+    <%- include('./partials/nav') %>
+
+    <!-- Center the card below navbar -->
+    <div class="page-container">
+      <div class="auth-card">
+        <h2 class="text-center mb-4">Create Account</h2>
+        <form action="/user/signup" method="post" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" name="fullName" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control" name="email" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" name="password" required />
+          </div>
+          <div>
+            <label for="profileImage" class="form-label">Add Image</label>
+          <input name="profileImage" type="file" id="profileImage" />
+          </div>
+          <button type="submit" class="btn btn-custom">Sign Up</button>
+        </form>
+      </div>
+    </div>
+
+    <%- include('./partials/script') %>
+  </body>
+</html>

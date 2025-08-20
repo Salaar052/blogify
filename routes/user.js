@@ -23,13 +23,13 @@ router.get('/signup',(req,res)=>{
     res.render("signup")
 })
 router.post('/signup',upload.single("profileImage"),async(req,res)=>{
-    const {name,email,password}= req.body;
+    const {fullName,email,password}= req.body;
     console.log(req.body);
     const user = await User.create({
-        fullName:name,
+        fullName,
         email,
         password,
-        profileImage: `/uploads/${req.file.filename}`,
+        profileImage: `/uploads/${req.file.filename}`||"",
     });
     
     

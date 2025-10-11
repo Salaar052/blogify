@@ -2,86 +2,257 @@
 <html lang="en">
   <head>
     <%- include('./partials/head') %>
-    <title>BlogPage</title>
+    <title><%= blog.title %></title>
     <style>
       body {
-        background: linear-gradient(135deg, #0d1b2a, #000000);
+        background: linear-gradient(135deg, #0d1b2a, #000);
         color: #f8f9fa;
-        min-height: 100vh;
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 0;
       }
+
+      .container {
+        max-width: 950px;
+        margin: 60px auto;
+        padding: 0 20px;
+      }
+
       .blog-card {
         background: #1b263b;
-        border-radius: 15px;
+        border-radius: 18px;
         padding: 2rem;
-        box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+        animation: fadeIn 0.8s ease;
       }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
       .blog-title {
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #4da3ff;
         text-align: center;
-        color: #1e90ff;
+        margin-bottom: 1.4rem;
       }
+
       .blog-img {
         display: block;
-        margin: 0 auto 1.5rem auto;
-        max-width: 100%;
-        border-radius: 12px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        width: 100%;
+        max-height: 380px;
+        object-fit: cover;
+        border-radius: 14px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 0 25px rgba(77, 163, 255, 0.25);
       }
+
+      .author-info {
+        display: flex;
+        align-items: center;
+        background: #0d1b2a;
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        box-shadow: inset 0 0 10px rgba(30, 144, 255, 0.2);
+        margin-bottom: 1.5rem;
+      }
+
+      .author-info img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 0.9rem;
+        border: 2px solid #4da3ff;
+        object-fit: cover;
+      }
+
+      .author-info span {
+        color: #dce3ec;
+        font-size: 1rem;
+      }
+
       .blog-body {
-        white-space: pre-wrap; /* keeps formatting but wraps text */
-        font-size: 1.05rem;
-        line-height: 1.6;
-        color: #e0e1dd;
+        white-space: pre-wrap;
+        font-size: 1.08rem;
+        line-height: 1.8;
+        color: #d1d5db;
+        margin-bottom: 2rem;
+        text-align: justify;
+      }
+
+      /* Download Button */
+      .download-btn {
+        display: inline-block;
+        background: #1e90ff;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 10px 20px;
+        text-decoration: none;
+        transition: all 0.3s;
+        margin-bottom: 2rem;
+      }
+
+      .download-btn:hover {
+        background: #63b3ed;
+        box-shadow: 0 0 12px #1e90ff;
+      }
+
+      /* Comment Section */
+      .comments-section {
+        background: #142136;
+        border-radius: 15px;
+        padding: 1.8rem;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        margin-top: 2.5rem;
+      }
+
+      .comments-section h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #63b3ed;
+        margin-bottom: 1.2rem;
+        text-align: center;
+      }
+
+      .comment {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 1.2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .comment img {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: 1px solid #1e90ff;
+        object-fit: cover;
+      }
+
+      .comment-content {
+        flex: 1;
+      }
+
+      .comment-content strong {
+        color: #63b3ed;
+      }
+
+      .comment-content pre {
+        margin: 5px 0 0;
+        color: #d1d5db;
+        white-space: pre-wrap;
+        font-size: 0.95rem;
+      }
+
+      .comment-form input {
+        background-color: #0d1b2a;
+        border: 1px solid #415a77;
+        color: white;
+        border-radius: 8px;
+        padding: 10px;
+        width: 100%;
+        margin-bottom: 10px;
+        transition: 0.3s;
+      }
+
+      .comment-form input:focus {
+        border-color: #1e90ff;
+        box-shadow: 0 0 10px #1e90ff;
+        outline: none;
+      }
+
+      .btn-primary {
+        background-color: #1e90ff;
+        color: white;
+        font-weight: bold;
+        padding: 10px 0;
+        border: none;
+        border-radius: 8px;
+        width: 100%;
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+
+      .btn-primary:hover {
+        background-color: #63b3ed;
+        box-shadow: 0 0 10px #1e90ff;
+      }
+
+      @media (max-width: 768px) {
+        .blog-title {
+          font-size: 1.7rem;
+        }
+
+        .blog-img {
+          max-height: 260px;
+          border-radius: 10px;
+        }
+
+        .blog-body {
+          font-size: 1rem;
+        }
       }
     </style>
   </head>
+
   <body>
     <%- include('./partials/nav') %>
 
-    <div class="container mt-5">
+    <div class="container">
       <div class="blog-card">
         <h1 class="blog-title"><%= blog.title %></h1>
-        <img
-          src="<%= blog.coverImageURL %>"
-          alt="Blog Cover"
-          class="blog-img"
-        />
-        <div class="blog-body"><%= blog.body %></div>
-      </div>
+        <img src="<%= blog.coverImageURL %>" alt="Blog Cover" class="blog-img" />
 
-      <div class="container mt-3">
-        <img src="<%= blog.createdBy.profileImage %>" height="50px" />
-        <%= blog.createdBy.fullName %>
-      </div>
-
-      <% if (locals.user) { %>
-      <form action="/blog/comment/<%= blog._id  %>" method="post">
-        <div class="mb-2 mt-2">
-          <input
-            type="text"
-            class="form-control"
-            name="content"
-            placeholder="Enter your Comment here"
-          />
+        <div class="author-info">
+          <img src="<%= blog.createdBy.profileImage %>" alt="Author Image" />
+          <span>By <strong><%= blog.createdBy.fullName %></strong></span>
         </div>
 
-        <button type="submit" class="btn btn-primary">Add</button>
-      </form>
+        <div class="blog-body"><%= blog.body %></div>
 
-      <% } %>
-    </div>
+        <div style="text-align:center;">
+          <a href="/blog/download/<%= blog._id %>" class="download-btn">
+            ⬇️ Download Blog as PDF
+          </a>
+        </div>
 
-    <div class="container mt-4">
-      <h1>Comments(<%= comments.length %>)</h1>
-      <% comments.forEach(comment => { %>
-        <img src="<%=comment.createdBy.profileImage %>" width="40px" />
-        <%= comment.createdBy.fullName%>:
-        <pre><%= comment.content%></pre>
-      <% }); %>
+        <% if (locals.user) { %>
+          <form action="/blog/comment/<%= blog._id %>" method="post" class="comment-form">
+            <input type="text" name="content" placeholder="Write a comment..." required />
+            <button type="submit" class="btn-primary">Add Comment</button>
+          </form>
+        <% } else { %>
+          <p style="text-align:center; margin-top:1rem;">
+            🔒 <em>Login to comment on this post</em>
+          </p>
+        <% } %>
+      </div>
+
+      <div class="comments-section">
+        <h1>Comments (<%= comments.length %>)</h1>
+        <% if (comments.length === 0) { %>
+          <p style="text-align:center;">No comments yet. Be the first to share your thoughts!</p>
+        <% } else { %>
+          <% comments.forEach(comment => { %>
+            <div class="comment">
+              <img src="<%= comment.createdBy.profileImage %>" alt="User" />
+              <div class="comment-content">
+                <strong><%= comment.createdBy.fullName %></strong>
+                <pre><%= comment.content %></pre>
+              </div>
+            </div>
+          <% }); %>
+        <% } %>
+      </div>
     </div>
 
     <%- include('./partials/script') %>
   </body>
+  <br>
+<%- include('./partials/footer') %>
 </html>

@@ -1,36 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('./partials/head') %>
-    <title>Add Blog</title>
-  </head>
-  <body>
-    <%- include('./partials/nav') %>
+<head>
+  <%- include('./partials/head') %>
+  <title>Add Blog</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0d1b2a, #000000);
+      color: #f8f9fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-    <div class="constainer mt-3">
-      <form action="/blog/add" method="post" enctype="multipart/form-data">
-        <div class="mb-3">
-          <label for="coverImage" class="form-label">Add File</label>
-          <input name="coverImage" type="file" id="coverImage" />
-          <br />
-          <label for="title" class="form-label">Title</label>
-          <input
-            type="text"
-            class="form-control"
-            id="title"
-            aria-describedby="title"
-            name="title"
-          />
-          <div class="mb-3">
-            <label for="body">Body</label>
-            <textarea name="body" class="form-control" id="body"></textarea>
-          </div>
+    h1 {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 30px;
+      margin-bottom: 30px;
+      color: #f8f9fa;
+    }
 
-          <button type="submit">Add Blog</button>
-        </div>
-      </form>
-    </div>
+    form {
+      background: #1b263b;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      max-width: 600px;
+      margin: 0 auto;
+    }
 
-    <%- include('./partials/script') %>
-  </body>
+    label {
+      color: #f8f9fa;
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    input[type="text"],
+    textarea {
+      border-radius: 8px;
+      padding: 10px;
+      width: 100%;
+      border: 1px solid #1e90ff;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Title input – white background by default */
+    #title {
+      background-color: #ffffff;
+      color: #000000;
+    }
+
+    /* Textarea and others keep dark look */
+    textarea {
+      background-color: #0d1b2a;
+      color: #ffffff;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: #63b3ed;
+      outline: none;
+      box-shadow: 0 0 10px #1e90ff;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-label {
+      display: inline-block;
+      background-color: #1e90ff;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .file-label:hover {
+      background-color: #63b3ed;
+      box-shadow: 0 0 10px #1e90ff;
+    }
+
+    button[type="submit"] {
+      background-color: #1e90ff;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      padding: 12px 20px;
+      width: 100%;
+      font-weight: bold;
+      margin-top: 20px;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #63b3ed;
+      box-shadow: 0 0 15px #1e90ff;
+    }
+  </style>
+</head>
+<body>
+  <%- include('./partials/nav') %>
+
+  <div class="container mt-5">
+    <h1>Add a New Blog</h1>
+    <form action="/blog/add" method="post" enctype="multipart/form-data">
+      <div class="mb-3">
+        <label for="coverImage" class="form-label">Add Cover Image</label><br>
+        <label for="coverImage" class="file-label">Choose File</label>
+        <input name="coverImage" type="file" id="coverImage" />
+      </div>
+
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input
+          type="text"
+          class="form-control"
+          id="title"
+          name="title"
+          placeholder="Enter blog title"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="body" class="form-label">Body</label>
+        <textarea
+          name="body"
+          class="form-control"
+          id="body"
+          rows="6"
+          placeholder="Write your blog content here..."
+        ></textarea>
+      </div>
+
+      <button type="submit">Add Blog</button>
+    </form>
+  </div>
+
+  <%- include('./partials/script') %>
+</body>
 </html>

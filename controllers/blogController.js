@@ -1,0 +1,207 @@
+const Blog = require("../models/blog");
+const Comment = require("../models/comment");
+const path = require("path");
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
+const axios = require("axios");
+
+function renderAddBlogPage(req, res) {
+  return res.render("addBlog", {
+    user: req.user,
+  });
+}
+
+async function getBlogById(req, res) {
+  try {
+    const blog = await Blog.findById(req.params.id).populate("createdBy");
+    const comments = await Comment.find({ blogId: req.params.id }).populate("createdBy");
+
+    if (!blog) {
+      return res.status(404).send("Blog not found");
+    }
+
+    res.render("blog", {
+      user: req.user,
+      blog,
+      comments,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+}
+
+async function addBlog(req, res) {
+  try {
+    const { title, body } = req.body;
+
+    const blog = await Blog.create({
+      title,
+      body,
+      createdBy: req.user._id,
+      coverImageURL: `/uploads/${req.file.filename}`,
+    });
+
+    return res.redirect(`/blog/${blog._id}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error adding blog");
+  }
+}
+
+async function addComment(req, res) {
+  try {
+    await Comment.create({
+      content: req.body.content,
+      blogId: req.params.blogId,
+      createdBy: req.user._id,
+    });
+
+    return res.redirect(`/blog/${req.params.blogId}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error adding comment");
+  }
+}
+
+function sanitizeFilename(s) {
+  return s.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").substring(0, 60);
+}
+
+async function loadImageBuffer(imageUrlOrPath) {
+ 
+  if (!imageUrlOrPath) return null;
+  if (imageUrlOrPath.startsWith("http://") || imageUrlOrPath.startsWith("https://")) {
+    const resp = await axios.get(imageUrlOrPath, { responseType: "arraybuffer" });
+    return Buffer.from(resp.data);
+  } else {
+    
+    const p = path.resolve("./public" + imageUrlOrPath);
+    if (fs.existsSync(p)) return fs.readFileSync(p);
+    return null;
+  }
+}
+
+async function downloadBlog(req, res) {
+  try {
+  
+    const blog = await Blog.findById(req.params.id).populate("createdBy", "fullName");
+    if (!blog) return res.status(404).send("Blog not found");
+
+   
+    const doc = new PDFDocument({
+      size: "A4",
+      margin: 50,
+      bufferPages: false,
+    });
+
+  
+    const fileTitle = sanitizeFilename(blog.title || "blog");
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${fileTitle}Blog.pdf"`);
+
+    doc.pipe(res);
+
+    const contentWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+
+    // --- Title ---
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(24)
+      .fillColor("#1e90ff")
+      .text(blog.title, { align: "center", width: contentWidth });
+
+    doc.moveDown(0.6);
+
+    // Horizontal rule
+    doc
+      .strokeColor("#2a3b50")
+      .lineWidth(1)
+      .moveTo(doc.x, doc.y)
+      .lineTo(doc.x + contentWidth, doc.y)
+      .stroke();
+
+    doc.moveDown(0.8);
+
+    // --- Cover Image 
+    let imageBuffer = null;
+    if (blog.coverImageURL) {
+      try {
+        imageBuffer = await loadImageBuffer(blog.coverImageURL);
+      } catch (e) {
+        console.warn("Could not load cover image:", e.message || e);
+      }
+    }
+
+    if (imageBuffer) {
+      
+      const maxImageHeight = 300;
+
+      const imageX = doc.x + (contentWidth - contentWidth) / 2; 
+      try {
+        doc.image(imageBuffer, {
+          fit: [contentWidth, maxImageHeight],
+          align: "center",
+          valign: "center",
+        });
+        doc.moveDown(1);
+      } catch (e) {
+        console.warn("pdfkit failed to embed image:", e.message || e);
+      }
+    }
+
+    // --- Body text ---
+    doc
+      .font("Helvetica")
+      .fontSize(12)
+      .fillColor("#222222") 
+      .text(blog.body || "", {
+        align: "justify",
+        width: contentWidth,
+        lineGap: 4,
+      });
+
+    doc.moveDown(1.2);
+
+    // --- Footer block with author and date (right aligned) ---
+    const authorName = blog.createdBy?.fullName || "Unknown";
+    const createdAt = blog.createdAt ? new Date(blog.createdAt).toLocaleString() : "";
+
+    doc.moveTo(doc.x, doc.y).lineTo(doc.x + contentWidth, doc.y).strokeColor("#e6eefc").lineWidth(0.4).stroke();
+    doc.moveDown(0.6);
+
+    // Right aligned info
+    doc
+      .font("Helvetica-Oblique")
+      .fontSize(11)
+      .fillColor("#555555")
+      .text(`Created by: ${authorName}`, { align: "right", width: contentWidth });
+    doc
+      .font("Helvetica")
+      .fontSize(10)
+      .fillColor("#777777")
+      .text(`Created at: ${createdAt}`, { align: "right", width: contentWidth });
+
+    const bottom = doc.page.height - doc.page.margins.bottom + 10;
+    doc.fontSize(9).fillColor("#999999");
+    doc.text(`Generated by Blogify by SalaarAsim`, doc.page.margins.left, bottom, {
+      width: contentWidth,
+      align: "center",
+    });
+
+    doc.end();
+  } catch (err) {
+    console.error("Error generating PDF:", err);
+    return res.status(500).send("Server error while generating PDF");
+  }
+}
+
+
+module.exports = {
+  renderAddBlogPage,
+  getBlogById,
+  addBlog,
+  addComment,
+  downloadBlog,
+};
+ 

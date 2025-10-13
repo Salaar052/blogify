@@ -31,11 +31,13 @@ app.get("/",async(req,res)=>{
     return res.render("home",{
         user: req.user,
         blogs: allBlogs,  
-        
-
-    });
-    
+    }); 
 });
+
+app.get("/ping",(req,res)=>{
+    return res.statusCode(200).send("pong")
+});
+
 
 
 app.listen(PORT, ()=>console.log(`Server started at port ${PORT}`))

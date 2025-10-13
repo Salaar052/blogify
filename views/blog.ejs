@@ -27,8 +27,14 @@
       }
 
       @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .blog-title {
@@ -39,15 +45,17 @@
         margin-bottom: 1.4rem;
       }
 
-      .blog-img {
-        display: block;
-        width: 100%;
-        max-height: 380px;
-        object-fit: cover;
-        border-radius: 14px;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 0 25px rgba(77, 163, 255, 0.25);
-      }
+     .blog-img {
+  display: block;
+  width: 100%;
+  max-height: 380px;
+  object-fit: contain; /* <-- fixed */
+  border-radius: 14px;
+  background-color: #0d1b2a; /* background for smaller images */
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 25px rgba(77, 163, 255, 0.25);
+}
+
 
       .author-info {
         display: flex;
@@ -189,9 +197,16 @@
         }
 
         .blog-img {
-          max-height: 260px;
-          border-radius: 10px;
-        }
+  display: block;
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain; /* shows full image without cropping */
+  border-radius: 14px;
+  background-color: #0d1b2a; /* fills space around smaller images */
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 25px rgba(77, 163, 255, 0.25);
+}
+
 
         .blog-body {
           font-size: 1rem;
@@ -206,7 +221,11 @@
     <div class="container">
       <div class="blog-card">
         <h1 class="blog-title"><%= blog.title %></h1>
-        <img src="<%= blog.coverImageURL %>" alt="Blog Cover" class="blog-img" />
+        <img
+          src="<%= blog.coverImageURL %>"
+          alt="Blog Cover"
+          class="blog-img"
+        />
 
         <div class="author-info">
           <img src="<%= blog.createdBy.profileImage %>" alt="Author Image" />
@@ -215,44 +234,53 @@
 
         <div class="blog-body"><%= blog.body %></div>
 
-        <div style="text-align:center;">
+        <div style="text-align: center">
           <a href="/blog/download/<%= blog._id %>" class="download-btn">
             ⬇️ Download Blog as PDF
           </a>
         </div>
 
         <% if (locals.user) { %>
-          <form action="/blog/comment/<%= blog._id %>" method="post" class="comment-form">
-            <input type="text" name="content" placeholder="Write a comment..." required />
-            <button type="submit" class="btn-primary">Add Comment</button>
-          </form>
+        <form
+          action="/blog/comment/<%= blog._id %>"
+          method="post"
+          class="comment-form"
+        >
+          <input
+            type="text"
+            name="content"
+            placeholder="Write a comment..."
+            required
+          />
+          <button type="submit" class="btn-primary">Add Comment</button>
+        </form>
         <% } else { %>
-          <p style="text-align:center; margin-top:1rem;">
-            🔒 <em>Login to comment on this post</em>
-          </p>
+        <p style="text-align: center; margin-top: 1rem">
+          🔒 <em>Login to comment on this post</em>
+        </p>
         <% } %>
       </div>
 
       <div class="comments-section">
         <h1>Comments (<%= comments.length %>)</h1>
         <% if (comments.length === 0) { %>
-          <p style="text-align:center;">No comments yet. Be the first to share your thoughts!</p>
-        <% } else { %>
-          <% comments.forEach(comment => { %>
-            <div class="comment">
-              <img src="<%= comment.createdBy.profileImage %>" alt="User" />
-              <div class="comment-content">
-                <strong><%= comment.createdBy.fullName %></strong>
-                <pre><%= comment.content %></pre>
-              </div>
-            </div>
-          <% }); %>
-        <% } %>
+        <p style="text-align: center">
+          No comments yet. Be the first to share your thoughts!
+        </p>
+        <% } else { %> <% comments.forEach(comment => { %>
+        <div class="comment">
+          <img src="<%= comment.createdBy.profileImage %>" alt="User" />
+          <div class="comment-content">
+            <strong><%= comment.createdBy.fullName %></strong>
+            <pre><%= comment.content %></pre>
+          </div>
+        </div>
+        <% }); %> <% } %>
       </div>
     </div>
 
     <%- include('./partials/script') %>
   </body>
-  <br>
-<%- include('./partials/footer') %>
+  <br />
+  <%- include('./partials/footer') %>
 </html>

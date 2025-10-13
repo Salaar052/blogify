@@ -35,7 +35,7 @@ app.get("/",async(req,res)=>{
 });
 
 app.get("/ping",(req,res)=>{
-    return res.statusCode(200).send("pong")
+    return res.status(200).send({message:"pong"}   )
 });
 
 
